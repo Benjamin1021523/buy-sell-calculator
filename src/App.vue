@@ -13,21 +13,36 @@
         {{ s.toUpperCase() }}
       </button>
     </div>
+    <div class="fee-discount">
+      <label for="fee-discount-input" class="label">手續費折扣</label>
+      <div class="input-wrap">
+        <input
+          id="fee-discount-input"
+          v-model="discountInput"
+          type="text"
+          placeholder="10"
+          maxlength="4"
+        />
+        <span class="suffix">折</span>
+      </div>
+    </div>
     <header class="header">
       <h1>買賣計算機</h1>
       <p class="subtitle">計算最有利的買賣數量</p>
     </header>
     <RouterView />
     <footer class="params-footer">
-      <p>本頁面以手續費比率 0.1425%（買賣皆收取，小數點捨去，最低 1 元）、交易稅比率 0.3%（僅賣出時收取，小數點捨去，最低 0 元）、最大成交金額 10,000 元為計算參數。</p>
+      <p>本頁面以手續費比率 0.1425%（買賣皆收取，小數點捨去，最低 1 元）、交易稅比率 0.3%（僅賣出時收取，小數點捨去，最低 0 元）、最大成交金額 10,000 元為計算參數。手續費可於右上角輸入折扣。</p>
     </footer>
   </div>
 </template>
 
 <script setup>
 import { useStyle } from './composables/useStyle'
+import { useFeeDiscount } from './composables/useFeeDiscount'
 
 const { style, setStyle } = useStyle()
+const { discountInput } = useFeeDiscount()
 </script>
 
 <style>
@@ -57,6 +72,43 @@ body {
 }
 
 .style-switcher .label {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.fee-discount {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.fee-discount .label {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.fee-discount .input-wrap {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.fee-discount .input-wrap input {
+  width: 3rem;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.875rem;
+  border: none;
+  text-align: right;
+}
+
+.fee-discount .input-wrap .suffix {
+  padding-right: 0.5rem;
   font-size: 0.875rem;
   color: #64748b;
 }

@@ -12,10 +12,13 @@ export function getTradeAmount(price, shares) {
 
 /**
  * 手續費 = 成交金額的 0.1425%，小數點捨去，最少為 1
+ * @param {number} tradeAmount - 成交金額
+ * @param {number} discountRate - 折扣乘數，如 0.6 表示 6 折
  */
-export function getFee(tradeAmount) {
-  const fee = Math.floor(tradeAmount * FEE_RATE)
-  return Math.max(1, fee)
+export function getFee(tradeAmount, discountRate = 1) {
+  const baseFee = Math.floor(tradeAmount * FEE_RATE)
+  const discounted = Math.floor(baseFee * discountRate)
+  return Math.max(1, discounted)
 }
 
 /**
@@ -28,15 +31,16 @@ export function getTax(tradeAmount) {
 /**
  * 計算買進花費與平均成本
  * @param {number} price - 買進目標價格
- * @returns {{ cost: number, shares: number, avgCost: number } | null}
+ * @param {number} feeDiscountRate - 手續費折扣乘數
+ * @returns {{ cost: number, shares: number, fee: number, avgCost: number } | null}
  */
-export function calcBuy(price) {
+export function calcBuy(price, feeDiscountRate = 1) {
   if (!price || price <= 0) return null
 
   const maxShares = Math.floor(MAX_TRADE_AMOUNT / price)
   if (maxShares < 1) {
     const tradeAmount = getTradeAmount(price, 1)
-    const fee = getFee(tradeAmount)
+    const fee = getFee(tradeAmount, feeDiscountRate)
     return { cost: tradeAmount + fee, shares: 1, fee, avgCost: (tradeAmount + fee) / 1 }
   }
 
@@ -45,7 +49,7 @@ export function calcBuy(price) {
 
   for (let shares = 1; shares <= maxShares; shares++) {
     const tradeAmount = getTradeAmount(price, shares)
-    const fee = getFee(tradeAmount)
+    const fee = getFee(tradeAmount, feeDiscountRate)
     const cost = tradeAmount + fee
     const avgCost = cost / shares
 
@@ -56,7 +60,7 @@ export function calcBuy(price) {
   }
 
   const tradeAmount = getTradeAmount(price, bestShares)
-  const fee = getFee(tradeAmount)
+  const fee = getFee(tradeAmount, feeDiscountRate)
   const cost = tradeAmount + fee
 
   return {
@@ -71,15 +75,16 @@ export function calcBuy(price) {
  * 計算賣出收益與平均收益
  * @param {number} price - 賣出目標價格
  * @param {boolean} noTax - 是否免交易稅
+ * @param {number} feeDiscountRate - 手續費折扣乘數
  * @returns {{ proceeds: number, shares: number, fee: number, tax: number, avgProceeds: number } | null}
  */
-export function calcSell(price, noTax = false) {
+export function calcSell(price, noTax = false, feeDiscountRate = 1) {
   if (!price || price <= 0) return null
 
   const maxShares = Math.floor(MAX_TRADE_AMOUNT / price)
   if (maxShares < 1) {
     const tradeAmount = getTradeAmount(price, 1)
-    const fee = getFee(tradeAmount)
+    const fee = getFee(tradeAmount, feeDiscountRate)
     const tax = noTax ? 0 : getTax(tradeAmount)
     const proceeds = tradeAmount - fee - tax
     return { proceeds, shares: 1, fee, tax, avgProceeds: proceeds / 1 }
@@ -90,7 +95,7 @@ export function calcSell(price, noTax = false) {
 
   for (let shares = 1; shares <= maxShares; shares++) {
     const tradeAmount = getTradeAmount(price, shares)
-    const fee = getFee(tradeAmount)
+    const fee = getFee(tradeAmount, feeDiscountRate)
     const tax = noTax ? 0 : getTax(tradeAmount)
     const proceeds = tradeAmount - fee - tax
     const avgProceeds = proceeds / shares
@@ -102,7 +107,7 @@ export function calcSell(price, noTax = false) {
   }
 
   const tradeAmount = getTradeAmount(price, bestShares)
-  const fee = getFee(tradeAmount)
+  const fee = getFee(tradeAmount, feeDiscountRate)
   const tax = noTax ? 0 : getTax(tradeAmount)
   const proceeds = tradeAmount - fee - tax
 

@@ -46,18 +46,20 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { calcSell } from '../utils/calculator'
+import { useFeeDiscount } from '../composables/useFeeDiscount'
 
 const price = ref(9.7)
 const noTax = ref(true)
 const result = ref(null)
+const { effectiveRate } = useFeeDiscount()
 
 function formatAvg(avg) {
   if (avg == null) return '-'
   return avg.toFixed(10).replace(/\.?0+$/, '')
 }
 
-watch([price, noTax], ([p, n]) => {
-  result.value = calcSell(p, n)
+watch([price, noTax, effectiveRate], ([p, n, rate]) => {
+  result.value = calcSell(p, n, rate)
 }, { immediate: true })
 </script>
 

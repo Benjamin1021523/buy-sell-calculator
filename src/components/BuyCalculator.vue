@@ -36,17 +36,19 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { calcBuy } from '../utils/calculator'
+import { useFeeDiscount } from '../composables/useFeeDiscount'
 
 const price = ref(9.7)
 const result = ref(null)
+const { effectiveRate } = useFeeDiscount()
 
 function formatAvgCost(avg) {
   if (avg == null) return '-'
   return avg.toFixed(10).replace(/\.?0+$/, '')
 }
 
-watch(price, (val) => {
-  result.value = calcBuy(val)
+watch([price, effectiveRate], ([p, rate]) => {
+  result.value = calcBuy(p, rate)
 }, { immediate: true })
 </script>
 
