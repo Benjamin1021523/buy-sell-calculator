@@ -63,8 +63,8 @@ npm run preview
 部署完成後：
 
 - 專案站點：`https://<username>.github.io/<repo-name>/`
-- 買進計算機：`/buy`
-- 賣出計算機：`/sell`
+- 買進計算機：`/buy/` 或 `/buy`
+- 賣出計算機：`/sell/` 或 `/sell`
 - 配色切換：點擊頁面左上角「配色切換」旁 A、B、C 按鈕
 
 ## 5. 常見問題

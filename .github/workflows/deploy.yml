@@ -34,9 +34,6 @@ jobs:
           # 專案站點（username.github.io/ repo-name）用下方；根站點用 VITE_BASE: /
           VITE_BASE: /${{ github.event.repository.name }}/
 
-      - name: Copy index.html to 404.html for SPA routing
-        run: cp dist/index.html dist/404.html
-
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
