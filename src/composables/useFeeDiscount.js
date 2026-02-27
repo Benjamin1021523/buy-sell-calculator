@@ -1,6 +1,14 @@
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
+import { getStorage, setStorage } from '../utils/storage'
 
-const discountInput = ref('10')
+const STORAGE_KEY = 'stock-calc-fee-discount'
+
+function loadDiscount() {
+  const saved = getStorage(STORAGE_KEY)
+  return saved != null && saved !== '' ? saved : '10'
+}
+
+const discountInput = ref(loadDiscount())
 
 /**
  * 解析 XX折 為乘數
@@ -24,6 +32,10 @@ export function parseDiscount(str) {
 
 export function useFeeDiscount() {
   const input = discountInput
+
+  watch(input, (v) => {
+    setStorage(STORAGE_KEY, String(v || '10'))
+  }, { immediate: true })
 
   const effectiveRate = computed(() => {
     const r = parseDiscount(input.value)
