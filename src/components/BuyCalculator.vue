@@ -13,19 +13,23 @@
     </div>
     <div v-if="result" class="output-group">
       <div class="result-row">
-        <span class="label">買進花費</span>
-        <span class="value">{{ result.cost }}</span>
-      </div>
-      <div class="result-row">
         <span class="label">成本最低買進數量</span>
         <span class="value">{{ result.shares }} 股</span>
       </div>
       <div class="result-row">
-        <span class="label">買進手續費金額</span>
+        <span class="label">買進金額</span>
+        <span class="value">{{ result.tradeAmount }}</span>
+      </div>
+      <div class="result-row">
+        <span class="label">手續費金額</span>
         <span class="value">{{ result.fee }}</span>
       </div>
       <div class="result-row">
-        <span class="label">此時平均成本</span>
+        <span class="label">實際花費金額</span>
+        <span class="value">{{ result.cost }}</span>
+      </div>
+      <div class="result-row">
+        <span class="label">平均成本</span>
         <span class="value">{{ formatAvgCost(result.avgCost) }} 元/股</span>
       </div>
     </div>

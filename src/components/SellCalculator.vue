@@ -21,15 +21,15 @@
     </div>
     <div v-if="result" class="output-group">
       <div class="result-row">
-        <span class="label">賣出所得</span>
-        <span class="value">{{ result.proceeds }}</span>
-      </div>
-      <div class="result-row">
         <span class="label">最高收益賣出數量</span>
         <span class="value">{{ result.shares }} 股</span>
       </div>
       <div class="result-row">
-        <span class="label">賣出手續費金額</span>
+        <span class="label">賣出金額</span>
+        <span class="value">{{ result.tradeAmount }}</span>
+      </div>
+      <div class="result-row">
+        <span class="label">手續費金額</span>
         <span class="value">{{ result.fee }}</span>
       </div>
       <div class="result-row">
@@ -37,7 +37,11 @@
         <span class="value">{{ result.tax }}({{ taxRatePercent }}%)</span>
       </div>
       <div class="result-row">
-        <span class="label">此時平均收益</span>
+        <span class="label">實際所得金額</span>
+        <span class="value">{{ result.proceeds }}</span>
+      </div>
+      <div class="result-row">
+        <span class="label">平均收益</span>
         <span class="value">{{ formatAvg(result.avgProceeds) }} 元/股</span>
       </div>
     </div>

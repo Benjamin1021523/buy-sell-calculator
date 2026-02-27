@@ -51,6 +51,11 @@ const { discountInput } = useFeeDiscount()
   box-sizing: border-box;
 }
 
+html {
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -59,7 +64,7 @@ body {
 
 .app {
   min-height: 100vh;
-  padding: 1rem 0 5.5rem;
+  padding: 1rem 0 7rem;
   position: relative;
 }
 

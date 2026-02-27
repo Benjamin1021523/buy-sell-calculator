@@ -43,7 +43,8 @@ export function calcBuy(price, feeDiscountRate = 1) {
   if (maxShares < 1) {
     const tradeAmount = getTradeAmount(price, 1)
     const fee = getFee(tradeAmount, feeDiscountRate)
-    return { cost: tradeAmount + fee, shares: 1, fee, avgCost: (tradeAmount + fee) / 1 }
+    const cost = tradeAmount + fee
+    return { tradeAmount, cost, shares: 1, fee, avgCost: cost / 1 }
   }
 
   let bestShares = 1
@@ -66,6 +67,7 @@ export function calcBuy(price, feeDiscountRate = 1) {
   const cost = tradeAmount + fee
 
   return {
+    tradeAmount,
     cost,
     shares: bestShares,
     fee,
@@ -89,7 +91,7 @@ export function calcSell(price, taxRate = TAX_RATE, feeDiscountRate = 1) {
     const fee = getFee(tradeAmount, feeDiscountRate)
     const tax = getTax(tradeAmount, taxRate)
     const proceeds = tradeAmount - fee - tax
-    return { proceeds, shares: 1, fee, tax, avgProceeds: proceeds / 1 }
+    return { tradeAmount, proceeds, shares: 1, fee, tax, avgProceeds: proceeds / 1 }
   }
 
   let bestShares = 1
@@ -114,6 +116,7 @@ export function calcSell(price, taxRate = TAX_RATE, feeDiscountRate = 1) {
   const proceeds = tradeAmount - fee - tax
 
   return {
+    tradeAmount,
     proceeds,
     shares: bestShares,
     fee,
