@@ -11,11 +11,13 @@
         placeholder="ex: 9.7"
       />
     </div>
-    <div class="input-group checkbox-group">
-      <label>
-        <input v-model="noTax" type="checkbox" />
-        無交易稅
-      </label>
+    <div class="input-group">
+      <label for="tax-rate">交易稅率</label>
+      <select id="tax-rate" v-model="taxRate" class="select-input">
+        <option value="0.003">正常稅率</option>
+        <option value="0.001">ETF稅率</option>
+        <option value="0">無交易稅</option>
+      </select>
     </div>
     <div v-if="result" class="output-group">
       <div class="result-row">
@@ -32,7 +34,7 @@
       </div>
       <div class="result-row">
         <span class="label">交易稅金額</span>
-        <span class="value">{{ result.tax }}</span>
+        <span class="value">{{ result.tax }}({{ taxRatePercent }}%)</span>
       </div>
       <div class="result-row">
         <span class="label">此時平均收益</span>
@@ -44,22 +46,27 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { calcSell } from '../utils/calculator'
 import { useFeeDiscount } from '../composables/useFeeDiscount'
 
 const price = ref('')
-const noTax = ref(false)
+const taxRate = ref('0.003')
 const result = ref(null)
 const { effectiveRate } = useFeeDiscount()
+
+const taxRatePercent = computed(() => {
+  const r = parseFloat(taxRate.value) * 100
+  return r === 0 ? '0' : r.toFixed(1)
+})
 
 function formatAvg(avg) {
   if (avg == null) return '-'
   return avg.toFixed(10).replace(/\.?0+$/, '')
 }
 
-watch([price, noTax, effectiveRate], ([p, n, rate]) => {
-  result.value = calcSell(p, n, rate)
+watch([price, taxRate, effectiveRate], ([p, tr, rate]) => {
+  result.value = calcSell(p, parseFloat(tr), rate)
 }, { immediate: true })
 </script>
 
@@ -88,16 +95,13 @@ watch([price, noTax, effectiveRate], ([p, n, rate]) => {
   border: 1px solid #e2e8f0;
 }
 
-.checkbox-group label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.input-group select.select-input {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
   cursor: pointer;
-}
-
-.checkbox-group input[type="checkbox"] {
-  width: 1.125rem;
-  height: 1.125rem;
 }
 
 .output-group {

@@ -22,10 +22,12 @@ export function getFee(tradeAmount, discountRate = 1) {
 }
 
 /**
- * 交易稅 = 成交金額的 0.3%，小數點捨去，最少為 0
+ * 交易稅 = 成交金額 × 稅率，小數點捨去，最少為 0
+ * @param {number} tradeAmount - 成交金額
+ * @param {number} taxRate - 稅率（0.003=0.3%、0.001=0.1%、0=無）
  */
-export function getTax(tradeAmount) {
-  return Math.floor(tradeAmount * TAX_RATE)
+export function getTax(tradeAmount, taxRate = TAX_RATE) {
+  return Math.floor(tradeAmount * taxRate)
 }
 
 /**
@@ -74,18 +76,18 @@ export function calcBuy(price, feeDiscountRate = 1) {
 /**
  * 計算賣出收益與平均收益
  * @param {number} price - 賣出目標價格
- * @param {boolean} noTax - 是否免交易稅
+ * @param {number} taxRate - 交易稅率（0.003=0.3%、0.001=0.1%、0=無）
  * @param {number} feeDiscountRate - 手續費折扣乘數
  * @returns {{ proceeds: number, shares: number, fee: number, tax: number, avgProceeds: number } | null}
  */
-export function calcSell(price, noTax = false, feeDiscountRate = 1) {
+export function calcSell(price, taxRate = TAX_RATE, feeDiscountRate = 1) {
   if (!price || price <= 0) return null
 
   const maxShares = Math.floor(MAX_TRADE_AMOUNT / price)
   if (maxShares < 1) {
     const tradeAmount = getTradeAmount(price, 1)
     const fee = getFee(tradeAmount, feeDiscountRate)
-    const tax = noTax ? 0 : getTax(tradeAmount)
+    const tax = getTax(tradeAmount, taxRate)
     const proceeds = tradeAmount - fee - tax
     return { proceeds, shares: 1, fee, tax, avgProceeds: proceeds / 1 }
   }
@@ -96,7 +98,7 @@ export function calcSell(price, noTax = false, feeDiscountRate = 1) {
   for (let shares = 1; shares <= maxShares; shares++) {
     const tradeAmount = getTradeAmount(price, shares)
     const fee = getFee(tradeAmount, feeDiscountRate)
-    const tax = noTax ? 0 : getTax(tradeAmount)
+    const tax = getTax(tradeAmount, taxRate)
     const proceeds = tradeAmount - fee - tax
     const avgProceeds = proceeds / shares
 
@@ -108,7 +110,7 @@ export function calcSell(price, noTax = false, feeDiscountRate = 1) {
 
   const tradeAmount = getTradeAmount(price, bestShares)
   const fee = getFee(tradeAmount, feeDiscountRate)
-  const tax = noTax ? 0 : getTax(tradeAmount)
+  const tax = getTax(tradeAmount, taxRate)
   const proceeds = tradeAmount - fee - tax
 
   return {
