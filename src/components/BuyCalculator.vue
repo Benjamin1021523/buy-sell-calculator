@@ -41,8 +41,9 @@
 import { ref, watch } from 'vue'
 import { calcBuy } from '../utils/calculator'
 import { useFeeDiscount } from '../composables/useFeeDiscount'
+import { usePrice } from '../composables/usePrice'
 
-const price = ref('')
+const { price } = usePrice()
 const result = ref(null)
 const { effectiveRate } = useFeeDiscount()
 
