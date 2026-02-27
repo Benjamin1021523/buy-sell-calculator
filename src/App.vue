@@ -12,7 +12,7 @@
             type="button"
             class="style-btn"
             :class="[`style-btn--${s}`, { active: style === s }]"
-            @click="setStyle(s)"
+            @click="setStyle(s); styleExpanded = false"
           >
             {{ s.toUpperCase() }}
           </button>
