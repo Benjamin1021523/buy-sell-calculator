@@ -1,17 +1,23 @@
 <template>
   <div class="app">
     <div class="style-switcher">
-      <span class="label">配色切換</span>
-      <button
-        v-for="s in ['a', 'b', 'c']"
-        :key="s"
-        type="button"
-        class="style-btn"
-        :class="[`style-btn--${s}`, { active: style === s }]"
-        @click="setStyle(s)"
-      >
-        {{ s.toUpperCase() }}
+      <button type="button" class="label-btn" @click="styleExpanded = !styleExpanded">
+        配色切換
       </button>
+      <transition name="style-expand">
+        <div v-show="styleExpanded" class="style-btns">
+          <button
+            v-for="s in ['a', 'b', 'c']"
+            :key="s"
+            type="button"
+            class="style-btn"
+            :class="[`style-btn--${s}`, { active: style === s }]"
+            @click="setStyle(s)"
+          >
+            {{ s.toUpperCase() }}
+          </button>
+        </div>
+      </transition>
     </div>
     <div class="fee-discount">
       <label for="fee-discount-input" class="label">手續費折扣</label>
@@ -39,9 +45,11 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { useStyle } from './composables/useStyle'
 import { useFeeDiscount } from './composables/useFeeDiscount'
 
+const styleExpanded = ref(false)
 const { style, setStyle } = useStyle()
 const { discountInput } = useFeeDiscount()
 </script>
@@ -74,12 +82,40 @@ body {
   left: 1rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  overflow: hidden;
 }
 
-.style-switcher .label {
+.style-switcher .label-btn {
+  padding: 0.35rem 0.5rem;
   font-size: 0.875rem;
   color: #64748b;
+  background: none;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.style-switcher .label-btn:hover {
+  background: #f1f5f9;
+}
+
+.style-switcher .style-btns {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 0.5rem;
+}
+
+.style-expand-enter-active,
+.style-expand-leave-active {
+  transition: all 0.2s ease;
+}
+
+.style-expand-enter-from,
+.style-expand-leave-to {
+  opacity: 0;
+  transform: translateX(-10px);
 }
 
 .fee-discount {
